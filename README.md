@@ -15,3 +15,5 @@
 **Кроссбраузерность**
 
 Данный сайт тестировался в Google Chrome, Yandex Browser, Mozila Firefox, Opera.
+
+* [Ссылка на Github Pages](https://10stavr96.github.io/mesto/)

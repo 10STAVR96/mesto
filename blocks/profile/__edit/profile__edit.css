@@ -8,6 +8,7 @@
 }
 
 .profile__edit:hover {
+    transition: opacity .5s linear;
     opacity: .6;
     cursor: pointer;
 }

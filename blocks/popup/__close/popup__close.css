@@ -9,6 +9,7 @@
 }
 
 .popup__close:hover {
+    transition: opacity .5s linear;
     opacity: .6;
     cursor: pointer;
 }
