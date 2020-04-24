@@ -27,65 +27,47 @@
         <button class="profile__add" type="button"></button>
       </section>
 
-      <section class="elements">
+      <section class="elements"></section>
+
+      <template class="elements-template">
         <div class="elements__element">
-          <img class="elements__image" src="./images/karachaevsk.jpg" alt="Карачаевск">
+          <img class="elements__image" src="" alt="">
+          <button class="elements__remove" type="button"></button>
           <div class="elements__info">
-            <h3 class="elements__name">Карачаевск</h3>
+            <h3 class="elements__name"></h3>
             <button class="elements__like" type="button"></button>
           </div>
         </div>
+      </template>
 
-        <div class="elements__element">
-          <img class="elements__image" src="./images/elbrus.jpg" alt="Эльбрус">
-          <div class="elements__info">
-            <h3 class="elements__name">Гора Эльбрус</h3>
-            <button class="elements__like" type="button"></button>
-          </div>
-        </div>
-
-        <div class="elements__element">
-          <img class="elements__image" src="./images/dombay.jpg" alt="Домбай">
-          <div class="elements__info">
-            <h3 class="elements__name">Домбай</h3>
-            <button class="elements__like" type="button"></button>
-          </div>
-        </div>
-
-        <div class="elements__element">
-          <img class="elements__image" src="./images/elbrus.jpg" alt="Эльбрус">
-          <div class="elements__info">
-            <h3 class="elements__name">Гора Эльбрус</h3>
-            <button class="elements__like" type="button"></button>
-          </div>
-        </div>
-
-        <div class="elements__element">
-          <img class="elements__image" src="./images/dombay.jpg" alt="Домбай">
-          <div class="elements__info">
-            <h3 class="elements__name">Домбай</h3>
-            <button class="elements__like" type="button"></button>
-          </div>
-        </div>
-
-        <div class="elements__element">
-          <img class="elements__image" src="./images/karachaevsk.jpg" alt="Карачаевск">
-          <div class="elements__info">
-            <h3 class="elements__name">Карачаевск</h3>
-            <button class="elements__like" type="button"></button>
-          </div>
-        </div>
-      </section>
-
-      <div class="popup">
+      <div id="form-profile" class="popup">
         <form class="popup__container" method="POST" action="index.html">
           <button class="popup__close" type="button"></button>
           <h2 class="popup__title">Редактировать профиль</h2>
-          <input class="popup__author" type="text" name="author" required placeholder="Ваше имя" value="Жак-Ив Кусто">
-          <input class="popup__status" type="text" name="status" placeholder="Ваш статус" value="Исследователь океана">
+          <input id="form-author" class="popup__input" type="text" name="author" required placeholder="Ваше имя">
+          <input id="form-status" class="popup__input" type="text" name="status" placeholder="Ваш статус">
           <button class="popup__save" type="submit">Сохранить</button>
         </form>
       </div>
+
+      <div id="form-card" class="popup">
+        <form class="popup__container" method="POST" action="index.html">
+          <button class="popup__close" type="button"></button>
+          <h2 class="popup__title">Новое место</h2>
+          <input id="card-name" class="popup__input" type="text" name="name" required placeholder="Название">
+          <input id="card-url" class="popup__input" type="text" name="url" required placeholder="Ссылка на картинку">
+          <button class="popup__save" type="submit">Создать</button>
+        </form>
+      </div>
+
+      <div id="element-image" class="popup">
+        <div class="popup__image-container">
+          <button class="popup__close" type="button"></button>
+          <img class="popup__image" src="" alt="">
+          <h3 class="popup__image-name"></h3>
+        </div>
+      </div>
+      
     </main>
 
     <footer class="footer">
