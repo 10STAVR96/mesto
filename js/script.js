@@ -40,69 +40,74 @@ const elements = document.querySelector('.elements');
 const formCard = document.querySelector('#form-card');
 const cardElement = formCard.querySelector('.popup__container');
 const formCardClose = formCard.querySelector('.popup__close');
-/*ниже переменные для popup (image-open) самой карточки из блока elements*/
+const elementsTemplate = document.querySelector('.elements-template').content;
+const formCardName = formCard.querySelector('#card-name');
+const formCardUrl = formCard.querySelector('#card-url');
+/*ниже переменные для popup (element-image) самой карточки из блока elements*/
 const elementImage = document.querySelector('#element-image');
 const elementImageClose = elementImage.querySelector('.popup__close');
+const imageValue = elementImage.querySelector('.popup__image');
+const imageNameValue = elementImage.querySelector('.popup__image-name');
 
 /* =============================================
    ниже функции создания и управления карточками
    =============================================
 */
 
-function addCards (nameValue, urlValue) {                       /*добавление/удаление карточек в DOM*/
-    const elementsTemplate = document.querySelector('.elements-template').content;
+function addCards (nameValue, urlValue) {                       /*разметка карточки в DOM*/
     const cardElements = elementsTemplate.cloneNode(true);
+    const elementsImage = cardElements.querySelector('.elements__image');
 
+    elementsImage.src = urlValue;
+    elementsImage.alt = nameValue;
     cardElements.querySelector('.elements__name').textContent = nameValue;
-    cardElements.querySelector('.elements__image').src = urlValue;
-    cardElements.querySelector('.elements__image').alt = nameValue;
-    cardElements.querySelector('.elements__like').addEventListener('click', (evt) => {
-        evt.target.classList.toggle('elements__like_active');
-    });
 
-    cardElements.querySelector('.elements__image').addEventListener('click', () => {
-        OpenImagePopup(nameValue, urlValue);
-    });
-    
-    cardElements.querySelector('.elements__remove').addEventListener('click', (evt) => {
-        evt.target.parentElement.remove();
-      });
+    cardElements.querySelector('.elements__like').addEventListener('click', likeActivateHandler);
+    cardElements.querySelector('.elements__image').addEventListener('click', () => openImagePopupHandler(nameValue, urlValue));
+    cardElements.querySelector('.elements__remove').addEventListener('click', removeCardsHandler);
 
-    elements.prepend(cardElements);
+    createBlock(elements, cardElements);
 }
 
-function OpenCloseformCard () {                          /*кнопка для открытия/закрытия окна создания карточек*/
-    formCard.classList.toggle('popup_opened');
+function likeActivateHandler (evt) {   /*активация лайков*/
+    evt.target.classList.toggle('elements__like_active');
 }
 
-function formSubmitCardAdd (evt) {                /*кнопка создать карточку*/
-    const formCardName = formCard.querySelector('#card-name');
-    const formCardUrl = formCard.querySelector('#card-url');
+function removeCardsHandler (evt) {  /*удаление карточки*/
+    evt.target.parentElement.remove();
+}
 
+function submitFormCardHandler (evt) {  /*кнопка создать карточку*/
     evt.preventDefault();
 
     addCards(formCardName.value, formCardUrl.value);
-    OpenCloseformCard ();
+    togglePopup(formCard);
 }
 
-/* =============================================
-   ниже функции открытия/закрытия изображения 
-   =============================================
+/* ==========================================
+   ниже функция добавления новых блоков в DOM
+   ==========================================
 */
 
-function OpenImagePopup (imageName, imageLink) {              /*открытие image-open по клику на изображение*/
-    const imageValue = elementImage.querySelector('.popup__image');
-    const imageNameValue = elementImage.querySelector('.popup__image-name');
+function createBlock (container, item, position='prepend') {  /*добавление новых блоков в DOM*/
+    if (position='prepend') {
+        container.prepend(item);
+    } else {
+        container.append(item);
+    }
+}
 
+/* ===========================================================
+   ниже функции открытия изображения (блок id="element-image")
+   ===========================================================
+*/
+
+function openImagePopupHandler (imageName, imageLink) {     /*открытие image-open по клику на изображение*/
     imageValue.src = imageLink;
     imageValue.alt = imageName;
     imageNameValue.textContent = imageName;
 
-    elementImage.classList.add('popup_opened');
-}
-
-function CloseImagePopup () {           /*закрытие image-open popup*/
-    elementImage.classList.remove('popup_opened');
+    togglePopup(elementImage);
 }
 
 /* ====================================
@@ -110,31 +115,38 @@ function CloseImagePopup () {           /*закрытие image-open popup*/
    ====================================
 */
 
-function profileEditOpenClose () {                          /*кнопка редактировать профиль и закрыть окно*/
-    if (formProfile.classList.contains('popup_opened')) {
-        formProfile.classList.remove('popup_opened');
-    } else {
-        formProfile.classList.add('popup_opened');
-        authorInput.value = profileAuthor.textContent;
-        statusInput.value = profileStatus.textContent;
-    }
+function profileEditHandler () {       /*заполнение formProfile данными при открытии*/
+    togglePopup(formProfile);
+    authorInput.value = profileAuthor.textContent;
+    statusInput.value = profileStatus.textContent;
 }
 
-function formSubmitProfileEdit (evt) {         /*кнопка сохранить изменения в редактировании профиля*/
+function submitProfileEditHandler (evt) {         /*кнопка сохранить изменения в редактировании профиля*/
     evt.preventDefault();
 
     profileAuthor.textContent = authorInput.value;
     profileStatus.textContent = statusInput.value;
-    formProfile.classList.remove('popup_opened');
+    togglePopup(formProfile);
 }
 
-editButton.addEventListener('click', profileEditOpenClose);
-closeButton.addEventListener('click', profileEditOpenClose);
-formElement.addEventListener('submit', formSubmitProfileEdit);
-profileAddButton.addEventListener('click', OpenCloseformCard);
-formCardClose.addEventListener('click', OpenCloseformCard);
-cardElement.addEventListener('submit', formSubmitCardAdd);
-elementImageClose.addEventListener('click', CloseImagePopup);
+/* ================================================
+   ниже функция открытия/закрытия всех popup блоков
+   ================================================
+*/
+
+function togglePopup (popupName) {        /*открытие/закрытие popup*/
+    popupName.classList.toggle('popup_opened');
+}
+
+
+
+editButton.addEventListener('click', profileEditHandler); /*редактирование профиля*/
+closeButton.addEventListener('click', () => togglePopup(formProfile)); /*закрытие редактирования профиля*/
+formElement.addEventListener('submit', submitProfileEditHandler); /*сохранить изменения в редактировании профиля*/
+profileAddButton.addEventListener('click', () => togglePopup(formCard)); /*открытие формы добавления новой карточки*/
+formCardClose.addEventListener('click', () => togglePopup(formCard)); /*закрытие формы добавления новой карточки*/
+cardElement.addEventListener('submit', submitFormCardHandler); /*добавление новой карточки в DOM*/
+elementImageClose.addEventListener('click', () => togglePopup(elementImage)); /*закрытие изображения*/
 
 initialCards.forEach((item) => {
     addCards(item.name, item.link);
