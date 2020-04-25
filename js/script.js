@@ -48,6 +48,8 @@ const elementImage = document.querySelector('#element-image');
 const elementImageClose = elementImage.querySelector('.popup__close');
 const imageValue = elementImage.querySelector('.popup__image');
 const imageNameValue = elementImage.querySelector('.popup__image-name');
+/*ниже переменная для функции createBlock*/
+const prepend = 'prepend';
 
 /* =============================================
    ниже функции создания и управления карточками
@@ -66,7 +68,7 @@ function addCards (nameValue, urlValue) {                       /*разметк
     cardElements.querySelector('.elements__image').addEventListener('click', () => openImagePopupHandler(nameValue, urlValue));
     cardElements.querySelector('.elements__remove').addEventListener('click', removeCardsHandler);
 
-    createBlock(elements, cardElements);
+    createBlock(elements, cardElements, prepend);
 }
 
 function likeActivateHandler (evt) {   /*активация лайков*/
@@ -89,8 +91,9 @@ function submitFormCardHandler (evt) {  /*кнопка создать карто
    ==========================================
 */
 
-function createBlock (container, item, position='prepend') {  /*добавление новых блоков в DOM*/
-    if (position='prepend') {
+function createBlock (container, item, position = '') {  /*добавление новых блоков в DOM*/
+
+    if (position==='prepend') {
         container.prepend(item);
     } else {
         container.append(item);
