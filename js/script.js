@@ -166,6 +166,8 @@ function closePopupClickEscHandler (evt) {          /*закрытие попа�
             form.classList.remove('popup_opened');
             clearErrors(inputsErrorArray, formElements);
         });
+
+        document.removeEventListener('keydown', closePopupClickEscHandler);
     }
 }
 
