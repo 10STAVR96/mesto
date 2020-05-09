@@ -2,7 +2,11 @@
 @import url(./__close/popup__close.css);
 @import url(./__title/popup__title.css);
 @import url(./__input/popup__input.css);
+@import url(./__input/_type/popup__input_type_error.css);
+@import url(./__input-error/popup__input-error.css);
+@import url(./__input-error/_visible/popup__error_visible.css);
 @import url(./__save/popup__save.css);
+@import url(./__save/_disabled/popup__save_disabled.css);
 @import url(./__image-container/popup__image-container.css);
 @import url(./__image/popup__image.css);
 @import url(./__image-name/popup__image-name.css);

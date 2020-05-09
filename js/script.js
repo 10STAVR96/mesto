@@ -3,6 +3,7 @@ const profile = document.querySelector('.profile');
 const editButton = profile.querySelector('.profile__edit');
 const profileAuthor = profile.querySelector('.profile__author');
 const profileStatus = profile.querySelector('.profile__status');
+const popupArray = Array.from(document.querySelectorAll('.popup'));
 const formProfile = document.querySelector('#form-profile');
 const closeButton = formProfile.querySelector('.popup__close');
 const formElement = formProfile.querySelector('.popup__container');
@@ -50,7 +51,8 @@ const imageValue = elementImage.querySelector('.popup__image');
 const imageNameValue = elementImage.querySelector('.popup__image-name');
 /*ниже переменная для функции createBlock*/
 const prepend = 'prepend';
-
+/*ниже переменная для clearErrors*/
+const inputsErrorArray = Array.from(document.querySelectorAll('.popup__input'));
 /* =============================================
    ниже функции создания и управления карточками
    =============================================
@@ -76,7 +78,10 @@ function likeActivateHandler (evt) {   /*активация лайков*/
 }
 
 function removeCardsHandler (evt) {  /*удаление карточки*/
-    evt.target.parentElement.remove();
+    evt.target.closest('.elements__element').removeEventListener('click', likeActivateHandler);
+    evt.target.closest('.elements__element').removeEventListener('click', () => openImagePopupHandler(nameValue, urlValue));
+    evt.target.closest('.elements__element').removeEventListener('click', removeCardsHandler);
+    evt.target.closest('.elements__element').remove();
 }
 
 function submitFormCardHandler (evt) {  /*кнопка создать карточку*/
@@ -141,16 +146,55 @@ function togglePopup (popupName) {        /*открытие/закрытие po
     popupName.classList.toggle('popup_opened');
 }
 
+function clearErrors (errorArray, formObject) {               /*очистка ошибок при закрытии попапов*/
+    const inputError = formObject.inputErrorClass;
+    const spanError = formObject.errorClass;
 
+    errorArray.forEach((inputElement) => {
+        const errorElement = document.querySelector(`#${inputElement.id}-error`);
+        if (inputElement.classList.contains(inputError) && errorElement.classList.contains(spanError)) {
+            inputElement.textContent = '';
+            inputElement.classList.remove(inputError);
+            errorElement.classList.remove(spanError);
+         }
+      });
+}
+
+function closePopupClickEscHandler (evt) {          /*закрытие попапа при нажатии на esc*/
+    if (evt.keyCode === 27) {
+        popupArray.forEach((form) => {
+            form.classList.remove('popup_opened');
+            clearErrors(inputsErrorArray, formElements);
+        });
+    }
+}
+
+function closePopupClickOverlayHandler (item) {        /*закрытие попапа по клику на оверлей*/
+    item.addEventListener('click', function (evt) {
+        if (evt.target.classList.contains('popup')) {
+            evt.path[0].classList.remove('popup_opened');
+            clearErrors(inputsErrorArray, formElements);
+        }
+    });
+}
 
 editButton.addEventListener('click', profileEditHandler); /*редактирование профиля*/
-closeButton.addEventListener('click', () => togglePopup(formProfile)); /*закрытие редактирования профиля*/
+closeButton.addEventListener('click', () => {     /*закрытие редактирования профиля*/
+    togglePopup(formProfile);
+    clearErrors(inputsErrorArray, formElements);
+});
 formElement.addEventListener('submit', submitProfileEditHandler); /*сохранить изменения в редактировании профиля*/
 profileAddButton.addEventListener('click', () => togglePopup(formCard)); /*открытие формы добавления новой карточки*/
-formCardClose.addEventListener('click', () => togglePopup(formCard)); /*закрытие формы добавления новой карточки*/
+formCardClose.addEventListener('click', () => {    /*закрытие формы добавления новой карточки*/
+    togglePopup(formCard);
+    clearErrors(inputsErrorArray, formElements);
+});
 cardElement.addEventListener('submit', submitFormCardHandler); /*добавление новой карточки в DOM*/
 elementImageClose.addEventListener('click', () => togglePopup(elementImage)); /*закрытие изображения*/
+popupArray.forEach((form) => closePopupClickOverlayHandler(form));           /*закрытие попапа по клику на оверлей*/
+document.addEventListener('keydown', closePopupClickEscHandler);   /*закрытие попапа при нажатии на esc*/
 
-initialCards.forEach((item) => {
+
+initialCards.forEach((item) => {     /*добавление начальных карточек в DOM*/
     addCards(item.name, item.link);
 });
