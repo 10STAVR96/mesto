@@ -22,7 +22,6 @@
     opacity: 0;
     display: flex;
     visibility: hidden;
-    transition: opacity .4s,
-                visibility linear .5s;
-    transition-delay: .1s;
+    transition: opacity 0.8s, visibility linear 0.3s;      /*в firefox все плавно открывается и закрывается*/
+    transition-delay: 0s, 0s;
 }

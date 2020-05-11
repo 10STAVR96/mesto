@@ -52,43 +52,55 @@ const imageNameValue = elementImage.querySelector('.popup__image-name');
 /*ниже переменная для функции createBlock*/
 const prepend = 'prepend';
 /*ниже переменная для clearErrors*/
-const inputsErrorArray = Array.from(document.querySelectorAll('.popup__input'));
+const inputsArray = Array.from(document.querySelectorAll('.popup__input'));
+
 /* =============================================
-   ниже функции создания и управления карточками
+   ниже функция очистки ошибок при закрытии попапов
    =============================================
 */
 
-function addCards (nameValue, urlValue) {                       /*разметка карточки в DOM*/
-    const cardElements = elementsTemplate.cloneNode(true);
-    const elementsImage = cardElements.querySelector('.elements__image');
-
-    elementsImage.src = urlValue;
-    elementsImage.alt = nameValue;
-    cardElements.querySelector('.elements__name').textContent = nameValue;
-
-    cardElements.querySelector('.elements__like').addEventListener('click', likeActivateHandler);
-    cardElements.querySelector('.elements__image').addEventListener('click', () => openImagePopupHandler(nameValue, urlValue));
-    cardElements.querySelector('.elements__remove').addEventListener('click', removeCardsHandler);
-
-    createBlock(elements, cardElements, prepend);
+const clearErrors = function (errorArray, formObject) {
+    errorArray.forEach((inputElement) => {
+        hideInputError(inputElement.parentElement, inputElement, formObject);
+    });
 }
 
-function likeActivateHandler (evt) {   /*активация лайков*/
-    evt.target.classList.toggle('elements__like_active');
+/* ================================================
+   ниже функция открытия/закрытия всех popup блоков
+   ================================================
+*/
+
+const togglePopup = function (popupName) {        /*открытие/закрытие popup*/
+    popupName.classList.toggle('popup_opened');
 }
 
-function removeCardsHandler (evt) {  /*удаление карточки*/
-    evt.target.closest('.elements__element').removeEventListener('click', likeActivateHandler);
-    evt.target.closest('.elements__element').removeEventListener('click', () => openImagePopupHandler(nameValue, urlValue));
-    evt.target.closest('.elements__element').removeEventListener('click', removeCardsHandler);
-    evt.target.closest('.elements__element').remove();
-}
+/*=========================================================
+  ниже функция открытия/закрытия попапа добавления карточки
+  =========================================================
+*/
 
-function submitFormCardHandler (evt) {  /*кнопка создать карточку*/
-    evt.preventDefault();
+const openCloseFormCardHandler = function () {
+    formCardName.value = '';
+    formCardUrl.value = '';
 
-    addCards(formCardName.value, formCardUrl.value);
+    clearErrors(inputsArray, formElements);
     togglePopup(formCard);
+    enableValidation(formElements);
+}
+
+/* ===========================================================
+   ниже функции открытия изображения (блок id="element-image")
+   ===========================================================
+*/
+
+const openImagePopupHandler = function (evt) {     /*открытие image-open по клику на изображение*/
+    const photo = evt.target;
+
+    imageValue.src = photo.src;
+    imageValue.alt = photo.alt;
+    imageNameValue.textContent = photo.alt;
+
+    togglePopup(elementImage);
 }
 
 /* ==========================================
@@ -96,7 +108,7 @@ function submitFormCardHandler (evt) {  /*кнопка создать карто
    ==========================================
 */
 
-function createBlock (container, item, position = '') {  /*добавление новых блоков в DOM*/
+const createBlock = function (container, item, position = '') {  /*добавление новых блоков в DOM*/
 
     if (position==='prepend') {
         container.prepend(item);
@@ -105,17 +117,56 @@ function createBlock (container, item, position = '') {  /*добавление 
     }
 }
 
-/* ===========================================================
-   ниже функции открытия изображения (блок id="element-image")
-   ===========================================================
+/* =============================================
+   ниже функции создания и управления карточками
+   =============================================
 */
 
-function openImagePopupHandler (imageName, imageLink) {     /*открытие image-open по клику на изображение*/
-    imageValue.src = imageLink;
-    imageValue.alt = imageName;
-    imageNameValue.textContent = imageName;
+const likeActivateHandler = function (evt) {   /*активация лайков*/
+    evt.target.classList.toggle('elements__like_active');
+}
 
-    togglePopup(elementImage);
+const removeCardsHandler = function (evt) {  /*удаление карточки*/
+    const card = evt.target.parentElement;
+    const elementImage = card.querySelector('.elements__image');
+    const elementLike = card.querySelector('.elements__like');
+    const elementRemove = card.querySelector('.elements__remove');
+
+    elementLike.removeEventListener('click', likeActivateHandler);
+    elementImage.removeEventListener('click', openImagePopupHandler);
+    elementRemove.removeEventListener('click', removeCardsHandler);
+    card.remove();
+}
+
+const setCards = function (nameValue, urlValue) {                       /*разметка карточки*/
+    const cardElements = elementsTemplate.cloneNode(true);
+    const elementsImage = cardElements.querySelector('.elements__image');
+    const elementsRemove = cardElements.querySelector('.elements__remove');
+    const elementsLike = cardElements.querySelector('.elements__like');
+    const elementsName = cardElements.querySelector('.elements__name');
+
+    elementsImage.src = urlValue;
+    elementsImage.alt = nameValue;
+    elementsName.textContent = nameValue;
+
+    elementsLike.addEventListener('click', likeActivateHandler);
+    elementsImage.addEventListener('click', openImagePopupHandler);
+    elementsRemove.addEventListener('click', removeCardsHandler);
+
+    return cardElements;
+}
+
+const createCard = function (nameValue, urlValue, container) {    /*добавление карточки в DOM*/
+    const item = setCards(nameValue, urlValue);
+    createBlock(container, item, prepend);
+}
+
+
+const submitFormCardHandler = function (evt) {  /*кнопка создать карточку*/
+    evt.preventDefault();
+
+    createCard(formCardName.value, formCardUrl.value, elements);
+    togglePopup(formCard);
 }
 
 /* ====================================
@@ -123,13 +174,14 @@ function openImagePopupHandler (imageName, imageLink) {     /*открытие i
    ====================================
 */
 
-function profileEditHandler () {       /*заполнение formProfile данными при открытии*/
+const profileEditHandler = function () {       /*открытие/закрытие formProfile*/
     togglePopup(formProfile);
     authorInput.value = profileAuthor.textContent;
     statusInput.value = profileStatus.textContent;
+    clearErrors(inputsArray, formElements);
 }
 
-function submitProfileEditHandler (evt) {         /*кнопка сохранить изменения в редактировании профиля*/
+const submitProfileEditHandler = function (evt) {         /*кнопка сохранить изменения в редактировании профиля*/
     evt.preventDefault();
 
     profileAuthor.textContent = authorInput.value;
@@ -137,66 +189,39 @@ function submitProfileEditHandler (evt) {         /*кнопка сохрани�
     togglePopup(formProfile);
 }
 
-/* ================================================
-   ниже функция открытия/закрытия всех popup блоков
-   ================================================
-*/
-
-function togglePopup (popupName) {        /*открытие/закрытие popup*/
-    popupName.classList.toggle('popup_opened');
-}
-
-function clearErrors (errorArray, formObject) {               /*очистка ошибок при закрытии попапов*/
-    const inputError = formObject.inputErrorClass;
-    const spanError = formObject.errorClass;
-
-    errorArray.forEach((inputElement) => {
-        const errorElement = document.querySelector(`#${inputElement.id}-error`);
-        if (inputElement.classList.contains(inputError) && errorElement.classList.contains(spanError)) {
-            inputElement.textContent = '';
-            inputElement.classList.remove(inputError);
-            errorElement.classList.remove(spanError);
-         }
-      });
-}
-
-function closePopupClickEscHandler (evt) {          /*закрытие попапа при нажатии на esc*/
+const closePopupClickEscHandler = function (evt) {          /*закрытие попапа при нажатии на esc*/
+    const popupOpened = document.querySelector('.popup_opened');
+    
     if (evt.keyCode === 27) {
-        popupArray.forEach((form) => {
-            form.classList.remove('popup_opened');
-            clearErrors(inputsErrorArray, formElements);
-        });
-
-        document.removeEventListener('keydown', closePopupClickEscHandler);
+        if (popupOpened) {
+            clearErrors(inputsArray, formElements);
+            togglePopup(popupOpened);
+        }
     }
 }
 
-function closePopupClickOverlayHandler (item) {        /*закрытие попапа по клику на оверлей*/
+const closePopupClickOverlayHandler = function (item) {        /*закрытие попапа по клику на оверлей*/
     item.addEventListener('click', function (evt) {
-        if (evt.target.classList.contains('popup')) {
-            evt.path[0].classList.remove('popup_opened');
-            clearErrors(inputsErrorArray, formElements);
+        const popupOpened = document.querySelector('.popup_opened');
+
+        if (evt.target.classList.contains('popup_opened')) {
+            clearErrors(inputsArray, formElements);
+            togglePopup(popupOpened);
         }
     });
 }
 
 editButton.addEventListener('click', profileEditHandler); /*редактирование профиля*/
-closeButton.addEventListener('click', () => {     /*закрытие редактирования профиля*/
-    togglePopup(formProfile);
-    clearErrors(inputsErrorArray, formElements);
-});
+closeButton.addEventListener('click', profileEditHandler); /*закрытие редактирования профиля*/
 formElement.addEventListener('submit', submitProfileEditHandler); /*сохранить изменения в редактировании профиля*/
-profileAddButton.addEventListener('click', () => togglePopup(formCard)); /*открытие формы добавления новой карточки*/
-formCardClose.addEventListener('click', () => {    /*закрытие формы добавления новой карточки*/
-    togglePopup(formCard);
-    clearErrors(inputsErrorArray, formElements);
-});
+profileAddButton.addEventListener('click', openCloseFormCardHandler);       /*открытие формы добавления новой карточки*/
+formCardClose.addEventListener('click', openCloseFormCardHandler);   /*закрытие формы добавления новой карточки*/
 cardElement.addEventListener('submit', submitFormCardHandler); /*добавление новой карточки в DOM*/
 elementImageClose.addEventListener('click', () => togglePopup(elementImage)); /*закрытие изображения*/
-popupArray.forEach((form) => closePopupClickOverlayHandler(form));           /*закрытие попапа по клику на оверлей*/
+popupArray.forEach((form) => closePopupClickOverlayHandler(form));          /*закрытие попапа по клику на оверлей*/
 document.addEventListener('keydown', closePopupClickEscHandler);   /*закрытие попапа при нажатии на esc*/
 
 
-initialCards.forEach((item) => {     /*добавление начальных карточек в DOM*/
-    addCards(item.name, item.link);
+initialCards.forEach((item) => {          /*добавление начальных карточек в DOM*/
+    createCard(item.name, item.link, elements);
 });
