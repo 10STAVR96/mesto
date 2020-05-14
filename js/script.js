@@ -61,7 +61,7 @@ const clearErrors = (popupName, formObject) => {         /*очищение ош
     const inputElements = Array.from(popupName.querySelectorAll(formObject.inputSelector));
     const inputButton = popupName.querySelector(formObject.submitButtonSelector);
     if (inputElements.length > 0) {
-        toggleButtonState(inputElements, inputButton, formObject);       /*данная функция здесь нужна для деактивации кнопки submit формы добавления карточки. Без нее при добавлении карточки и открытии формы повторно, кнопка submit активна не смотря на пустые поля*/
+        toggleButtonState(inputElements, inputButton, formObject);       /*данная функция нужна для деактивации кнопки submit формы добавления карточки. Без нее при добавлении карточки и открытии формы повторно, кнопка submit активна не смотря на пустые поля*/
         inputElements.forEach((input) => {
             hideInputError(popupName, input, formObject);
         });
