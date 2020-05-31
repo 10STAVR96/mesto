@@ -64,10 +64,7 @@ const elementImageClose = elementImage.querySelector('.popup__close');
 /*ниже переменная для функции createBlock*/
 const prepend = 'prepend';
 
-/* ==========================================
-   ниже функции добавления и удаления блоков 
-   ==========================================
-*/
+/*ниже функции добавления и удаления блоков*/
 const createBlock = (container, item, position = '') => {  /*добавление новых блоков в DOM*/
 
     if (position==='prepend') {
@@ -77,11 +74,38 @@ const createBlock = (container, item, position = '') => {  /*добавлени�
     }
 };
 
-/* =============================================
-   ниже функции создания и управления карточками
-   =============================================
-*/
-const createCard = (photo) => {    /*добавление карточки в DOM*/
+/*ниже функция открытия/закрытия всех popup блоков*/
+export const togglePopup = (popupName) => {        /*открытие/закрытие popup*/
+    if (!popupName.classList.contains('popup_opened')) {
+        document.addEventListener('keydown', closePopupClickEscHandler);
+    } else {
+        document.removeEventListener('keydown', closePopupClickEscHandler);
+    }
+    popupName.classList.toggle('popup_opened');
+};
+
+const closePopupClickEscHandler = (evt) => {          /*закрытие попапа при нажатии на esc  ====== данная функция выше togglePopup тк всегда сначала запускается togglePopup а потом уже если if === true данная функция*/
+    const popupOpened = document.querySelector('.popup_opened');
+    
+    if (evt.key === 'Escape') {
+       if (popupOpened) {
+            togglePopup(popupOpened);
+        }
+    }
+};
+
+const closePopupClickOverlayHandler = (item) => {    /*закрытие попапа по клику на оверлей*/
+    item.addEventListener('click', (evt) => {
+        const popupOpened = document.querySelector('.popup_opened');
+
+        if (evt.target.classList.contains('popup_opened')) {
+            togglePopup(popupOpened);
+        }
+    });
+};
+
+/*ниже функции создания и управления карточками*/
+const createCard = (photo) => {        /*добавление карточки в DOM*/
     const card = new Card(photo, templateElementsClass);
     const cardElement = card.generateCard();
     createBlock(elements, cardElement, prepend);
@@ -98,57 +122,23 @@ const submitFormCardHandler = (evt) => {  /*кнопка создать карт
     togglePopup(formCard);
 };
 
-/* ================================================
-   ниже функция открытия/закрытия всех popup блоков
-   ================================================
-*/
-const closePopupClickEscHandler = (evt) => {          /*закрытие попапа при нажатии на esc  ====== данная функция выше togglePopup тк всегда сначала запускается togglePopup а потом уже если if === true данная функция*/
-    const popupOpened = document.querySelector('.popup_opened');
-    
-    if (evt.keyCode === 27) {
-       if (popupOpened) {
-            togglePopup(popupOpened);
-        }
-    }
-};
-
-const togglePopup = (popupName) => {        /*открытие/закрытие popup*/
-    popupName.classList.toggle('popup_opened');
-};
-
-const closePopupClickOverlayHandler = (item) => {    /*закрытие попапа по клику на оверлей*/
-    item.addEventListener('click', (evt) => {
-        const popupOpened = document.querySelector('.popup_opened');
-
-        if (evt.target.classList.contains('popup_opened')) {
-            togglePopup(popupOpened);
-        }
-    });
-};
-
-/*=========================================================
-  ниже функция открытия/закрытия попапа добавления карточки
-  =========================================================
-*/
+/*ниже функция открытия/закрытия попапа добавления карточки*/
 const openCloseFormCardHandler = () => {
     formCardName.value = '';
     formCardUrl.value = '';
 
-    formCardValidation.showButtonError(formCardSubmit);
-    formCardValidation.hideInputError(formCardName);
-    formCardValidation.hideInputError(formCardUrl);
+    formCardValidation._showButtonError(formCardSubmit); /*я специально делал методы публичными тк я их использую для очистки ошибок но вы сказали сделать приватными*/
+    formCardValidation._hideInputError(formCardName);
+    formCardValidation._hideInputError(formCardUrl);
 
     togglePopup(formCard);
 };
 
-/* ====================================
-   ниже функции редактирования профиля
-   ====================================
-*/
+/*ниже функции редактирования профиля*/
 const profileEditHandler = () => {   /*открытие/закрытие formProfile*/
-    formProfileValidation.hideInputError(authorInput);
-    formProfileValidation.hideInputError(statusInput);
-    formProfileValidation.hideButtonError(formProfileSubmit);
+    formProfileValidation._hideInputError(authorInput);
+    formProfileValidation._hideInputError(statusInput);
+    formProfileValidation._hideButtonError(formProfileSubmit);
     authorInput.value = profileAuthor.textContent;
     statusInput.value = profileStatus.textContent;
     togglePopup(formProfile);
@@ -162,7 +152,6 @@ const submitProfileEditHandler = (evt) => {  /*кнопка сохранить �
     togglePopup(formProfile);
 };
 
-
 editButton.addEventListener('click', profileEditHandler); /*редактирование профиля*/
 closeButton.addEventListener('click', profileEditHandler); /*закрытие редактирования профиля*/
 formProfile.addEventListener('submit', submitProfileEditHandler);  /*сохранить изменения в редактировании профиля*/
@@ -171,7 +160,6 @@ formCardClose.addEventListener('click', openCloseFormCardHandler);   /*закр�
 formCard.addEventListener('submit', submitFormCardHandler); /*добавление новой карточки в DOM*/
 elementImageClose.addEventListener('click', () => togglePopup(elementImage)); /*закрытие изображения*/
 popupArray.forEach((form) => closePopupClickOverlayHandler(form)); /*закрытие попапа по клику на оверлей*/
-document.addEventListener('keydown', closePopupClickEscHandler);  /*закрытие попапов по клику на фон, если не кидать событие на документ, то не будет работать закрытие попапа изображений, тк событие открытия картинки вешается в классе, через метод _handleOpenImage, а не через togglePopup*/
 
 initialCards.forEach((item) => {   /*добавление начальных карточек в DOM*/
     createCard(item);

@@ -1,6 +1,9 @@
+import {togglePopup} from './index.js';
+
 const elementImage = document.querySelector('#element-image');
 const popupImage = elementImage.querySelector('.popup__image');
 const popupImageName = elementImage.querySelector('.popup__image-name');
+/*const elementsImage = document.querySelector('.elements__image');*/
 
 export default class Card {
     constructor(data, cardSelector) {
@@ -20,7 +23,7 @@ export default class Card {
         popupImage.src = this._link;
         popupImage.alt = this._name;
         popupImageName.textContent = this._name;
-        elementImage.classList.add('popup_opened');
+        togglePopup(elementImage);
     }
     _handleLike() {
         this._element.querySelector('.elements__like').classList.toggle('elements__like_active');
@@ -35,10 +38,11 @@ export default class Card {
     }
     generateCard() {
         this._element = this._getTemplate();
+        const elementsImage = this._element.querySelector('.elements__image');
         this._setEventListeners();
         this._element.querySelector('.elements__name').textContent = this._name;
-        this._element.querySelector('.elements__image').src = this._link;
-        this._element.querySelector('.elements__image').alt = this._name;
+        elementsImage.src = this._link;
+        elementsImage.alt = this._name;
 
         return this._element;
     }

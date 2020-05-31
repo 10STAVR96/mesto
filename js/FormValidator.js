@@ -1,11 +1,7 @@
-/*   =========================
-     ниже класс валидации форм
-     =========================
-*/
+/*ниже класс валидации форм*/
 export default class FormValidator {
     constructor(formObject, formName) {
         this._formName = formName;
-        this._formSelector = formObject.formSelector;
         this._inputSelector = formObject.inputSelector;
         this._submitButtonSelector = formObject.submitButtonSelector;
         this._inactiveButtonClass = formObject.inactiveButtonClass;
@@ -18,17 +14,17 @@ export default class FormValidator {
         errorElement.textContent = errorMessage;
         errorElement.classList.add(this._errorClass);
     }
-    hideInputError(inputElement) {   /*скрытие ошибки валидации*/
+    _hideInputError(inputElement) {   /*скрытие ошибки валидации*/
         const errorElement = this._formName.querySelector(`#${inputElement.id}-error`);
         inputElement.classList.remove(this._inputErrorClass);
         errorElement.classList.remove(this._errorClass);
         errorElement.textContent = '';
     }
-    showButtonError(buttonSubmit) {
+    _showButtonError(buttonSubmit) {
         buttonSubmit.classList.add(this._inactiveButtonClass);
         buttonSubmit.setAttribute('disabled', true);
     }
-    hideButtonError(buttonSubmit) {
+    _hideButtonError(buttonSubmit) {
         buttonSubmit.classList.remove(this._inactiveButtonClass);
         buttonSubmit.removeAttribute('disabled');
     }
