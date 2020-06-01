@@ -32,7 +32,7 @@ export default class FormValidator {
         if (!inputElement.validity.valid) {
             this._showInputError(inputElement, inputElement.validationMessage);
         } else {
-            this.hideInputError(inputElement);
+            this._hideInputError(inputElement);
         }
     }
     _hasInvalidInput(inputList) {   /*проверка на неправильную валидацию*/
@@ -40,9 +40,9 @@ export default class FormValidator {
     }
     _toggleButtonState(inputList, buttonSubmit) {  /*активация/деактивация кнопки submit*/
         if (this._hasInvalidInput(inputList)) {
-            this.hideButtonError(buttonSubmit);
+            this._hideButtonError(buttonSubmit);
         } else {
-            this.showButtonError(buttonSubmit);
+            this._showButtonError(buttonSubmit);
         }
     }
     enableValidation() {       /*запуск валидации*/
