@@ -18,8 +18,6 @@ const formCardName = formCard.querySelector('#card-name');
 const formCardUrl = formCard.querySelector('#card-url');
 const formCardClose = formCard.querySelector('.popup__close');
 const formCardSubmit = formCard.querySelector('.popup__save');
-/*ниже переменные для всех popup блоков*/
-const popupArray = Array.from(document.querySelectorAll('.popup'));
 /*ниже переменные для редактирования профиля*/
 const editButton = profile.querySelector('.profile__edit');
 const profileAuthor = profile.querySelector('.profile__author');
@@ -28,7 +26,6 @@ const formProfile = document.querySelector('#form-profile');
 const closeButton = formProfile.querySelector('.popup__close');
 const authorInput = formProfile.querySelector('#form-author');
 const statusInput = formProfile.querySelector('#form-status');
-const formProfileSubmit = formProfile.querySelector('.popup__save');
 /*Ниже переменные для добавления, хранения карточек и для формы добавления карточек*/
 const initialCards = [
     {
@@ -63,6 +60,8 @@ const elementImage = document.querySelector('#element-image');
 const elementImageClose = elementImage.querySelector('.popup__close');
 /*ниже переменная для функции createBlock*/
 const prepend = 'prepend';
+/*ниже переменная для функции closePopupClickEscHandler*/
+const escape = 'Escape';
 
 /*ниже функции добавления и удаления блоков*/
 const createBlock = (container, item, position = '') => {  /*добавление новых блоков в DOM*/
@@ -74,34 +73,47 @@ const createBlock = (container, item, position = '') => {  /*добавлени�
     }
 };
 
-/*ниже функция открытия/закрытия всех popup блоков*/
-export const togglePopup = (popupName) => {        /*открытие/закрытие popup*/
-    if (!popupName.classList.contains('popup_opened')) {
-        document.addEventListener('keydown', closePopupClickEscHandler);
-    } else {
-        document.removeEventListener('keydown', closePopupClickEscHandler);
-    }
-    popupName.classList.toggle('popup_opened');
-};
+/*ниже функция чистки ошибок*/
+const cleanErrors = (element) => {
+    const inputList = Array.from(element.querySelectorAll('.popup__input'));
+    const errorList = Array.from(element.querySelectorAll(`.popup__input-error`));
 
+    inputList.forEach((input) => {
+        input.classList.remove('popup__input_type_error');
+    });
+    errorList.forEach((error) => {
+        error.classList.remove('popup__error_visible');
+        error.textContent = '';
+    });
+}
+
+/*ниже функция открытия/закрытия всех popup блоков*/
 const closePopupClickEscHandler = (evt) => {          /*закрытие попапа при нажатии на esc  ====== данная функция выше togglePopup тк всегда сначала запускается togglePopup а потом уже если if === true данная функция*/
     const popupOpened = document.querySelector('.popup_opened');
-    
-    if (evt.key === 'Escape') {
-       if (popupOpened) {
-            togglePopup(popupOpened);
-        }
+
+    if (evt.key === escape) {
+        togglePopup(popupOpened);
     }
 };
 
-const closePopupClickOverlayHandler = (item) => {    /*закрытие попапа по клику на оверлей*/
-    item.addEventListener('click', (evt) => {
+const closePopupClickOverlayHandler = (evt) => {    /*закрытие попапа по клику на оверлей*/
         const popupOpened = document.querySelector('.popup_opened');
 
         if (evt.target.classList.contains('popup_opened')) {
             togglePopup(popupOpened);
         }
-    });
+};
+
+const togglePopup = (popupName) => {        /*открытие/закрытие popup*/
+    if (!popupName.classList.contains('popup_opened')) {
+        document.addEventListener('keydown', closePopupClickEscHandler);
+        document.addEventListener('click', closePopupClickOverlayHandler);
+    } else {
+        document.removeEventListener('keydown', closePopupClickEscHandler);
+        document.removeEventListener('click', closePopupClickOverlayHandler);
+    }
+    popupName.classList.toggle('popup_opened');
+    cleanErrors(popupName);
 };
 
 /*ниже функции создания и управления карточками*/
@@ -126,19 +138,14 @@ const submitFormCardHandler = (evt) => {  /*кнопка создать карт
 const openCloseFormCardHandler = () => {
     formCardName.value = '';
     formCardUrl.value = '';
-
-    formCardValidation._showButtonError(formCardSubmit); /*я специально делал методы публичными тк я их использую для очистки ошибок но вы сказали сделать приватными*/
-    formCardValidation._hideInputError(formCardName);
-    formCardValidation._hideInputError(formCardUrl);
+    formCardSubmit.classList.add('popup__save_disabled');
+    formCardSubmit.setAttribute('disabled', true);
 
     togglePopup(formCard);
 };
 
 /*ниже функции редактирования профиля*/
 const profileEditHandler = () => {   /*открытие/закрытие formProfile*/
-    formProfileValidation._hideInputError(authorInput);
-    formProfileValidation._hideInputError(statusInput);
-    formProfileValidation._hideButtonError(formProfileSubmit);
     authorInput.value = profileAuthor.textContent;
     statusInput.value = profileStatus.textContent;
     togglePopup(formProfile);
@@ -159,7 +166,6 @@ profileAddButton.addEventListener('click', openCloseFormCardHandler); /*откр
 formCardClose.addEventListener('click', openCloseFormCardHandler);   /*закрытие формы добавления новой карточки*/
 formCard.addEventListener('submit', submitFormCardHandler); /*добавление новой карточки в DOM*/
 elementImageClose.addEventListener('click', () => togglePopup(elementImage)); /*закрытие изображения*/
-popupArray.forEach((form) => closePopupClickOverlayHandler(form)); /*закрытие попапа по клику на оверлей*/
 
 initialCards.forEach((item) => {   /*добавление начальных карточек в DOM*/
     createCard(item);

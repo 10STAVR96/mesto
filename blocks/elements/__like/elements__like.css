@@ -3,6 +3,7 @@
     width: 22px;
     height: 20px;
     border: none;
+    outline: none;
 }
 
 .elements__like:hover {

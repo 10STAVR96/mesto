@@ -1,9 +1,7 @@
-import {togglePopup} from './index.js';
-
+const escape = 'Escape';
 const elementImage = document.querySelector('#element-image');
 const popupImage = elementImage.querySelector('.popup__image');
 const popupImageName = elementImage.querySelector('.popup__image-name');
-/*const elementsImage = document.querySelector('.elements__image');*/
 
 export default class Card {
     constructor(data, cardSelector) {
@@ -19,11 +17,29 @@ export default class Card {
             .cloneNode(true);
         return cardElement;
     }
+    _handleClosePopupClickEsc(evt) {
+        if (evt.key === escape) {
+            elementImage.classList.remove('popup_opened');
+        }
+    }
+    _handlerClosePopupClickOverlay(evt) {
+        if (evt.target.classList.contains('popup')) {
+            elementImage.classList.remove('popup_opened');
+        }
+    }
     _handleOpenImage() {
-        popupImage.src = this._link;
-        popupImage.alt = this._name;
-        popupImageName.textContent = this._name;
-        togglePopup(elementImage);
+        const popupOpened = this._element.classList.contains('popup_opened');
+        if (!popupOpened) {
+            popupImage.src = this._link;
+            popupImage.alt = this._name;
+            popupImageName.textContent = this._name;
+            document.addEventListener('keydown', this._handleClosePopupClickEsc);
+            document.addEventListener('click', this._handlerClosePopupClickOverlay);
+        } else {
+            document.removeEventListener('keydown', this._handleClosePopupClickEsc);
+            document.removeEventListener('click', this._handlerClosePopupClickOverlay);
+        }
+        elementImage.classList.toggle('popup_opened');
     }
     _handleLike() {
         this._element.querySelector('.elements__like').classList.toggle('elements__like_active');
