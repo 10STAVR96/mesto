@@ -15,6 +15,8 @@ import {
     editButton,
     formProfile,
     elementImage,
+    authorInput,
+    statusInput,
     formProfileInfo,
 } from '../js/utils/constants.js';
 
@@ -36,23 +38,28 @@ const cleanErrors = (element) => {
     });
 }
 
-const profileEditHandler = () => {                     /*открытие/закрытие formProfile*/
-    const userInfo = new UserInfo (formProfileInfo);
-    const editFormProfile = new PopupWithForm ({
-        submitFormHandler: (evt) => {
-            evt.preventDefault();
-    
-            userInfo.setUserInfo();
-            editFormProfile.close();
-        }
-    }, formProfile);
+/*ниже классы и функции для редактирования профиля*/
+const userInfo = new UserInfo (formProfileInfo); /*информация о пользователе*/
+
+const editFormProfile = new PopupWithForm ({  /*класс формы редактирования профиля*/
+    submitFormHandler: (evt) => {
+        evt.preventDefault();
+
+        userInfo.setUserInfo();
+        editFormProfile.close();
+    }
+}, formProfile);
+
+const profileEditHandler = () => {          /*открытие/закрытие профиля*/
+    const infoUser = userInfo.getUserInfo();
+    authorInput.value = infoUser.author;
+    statusInput.value = infoUser.status;
     editFormProfile.open();
-    userInfo.getUserInfo();
     cleanErrors(formProfile);
 };
 
-editButton.addEventListener('click', profileEditHandler);
-
+/*ниже классы и функции для добавления карточек (в том числе начальных)*/
+const popupImage = new popupWithImage(elementImage);
 
 const defaultCardList = new Section({    /*добавление начальных карточек*/
     items: initialCards,
@@ -60,8 +67,7 @@ const defaultCardList = new Section({    /*добавление начальны
         const card = new Card({
             data: item, 
             handleCardClick: () => {
-                const popupImage = new popupWithImage(item, elementImage);
-                popupImage.open();
+                popupImage.open(item);
             }
         }, templateElementsClass);
         const cardElement = card.generateCard();
@@ -69,31 +75,34 @@ const defaultCardList = new Section({    /*добавление начальны
     }
 }, elements);
 
+const formAddCard = new PopupWithForm ({   /*класс открытия/закрытия попапа добавления карточки*/
+    submitFormHandler: (evt) => {
+        evt.preventDefault();
+        const item = formAddCard.getInputValues();
+        const card = new Card ({
+            data: item,
+            handleCardClick: () => {
+                popupImage.open(item);
+            }
+        }, templateElementsClass);
+        const cardElement = card.generateCard();
+        defaultCardList.addItem(cardElement);
+        formAddCard.close();
+    }
+}, formCard);
+
 const OpenAddCardHandler = () => {    /*открытие/закрытие попапа добавления карточки*/
-    const formAddCard = new PopupWithForm ({
-        submitFormHandler: (evt) => {
-            evt.preventDefault();
-            const item = formAddCard.getInputValues();
-            const card = new Card ({
-                data: item,
-                handleCardClick: () => {
-                    const popupImage = new popupWithImage(item, elementImage);
-                    popupImage.open();
-                }
-            }, templateElementsClass);
-            const cardElement = card.generateCard();
-            defaultCardList.addItem(cardElement);
-            formAddCard.close();
-        }
-    }, formCard);
     formAddCard.open();
     cleanErrors(formCard);
 };
 
+/*ниже классы для валидации форм*/
 const formProfileValidation = new FormValidator(formElements, formProfile); /*валидация формы профиля*/
 const formCardValidation = new FormValidator(formElements, formCard); /*валидация формы добавления карточки*/
 
-profileAddButton.addEventListener('click', OpenAddCardHandler); /*редактирование профиля*/
+/*ниже события и запуск валидации*/
+editButton.addEventListener('click', profileEditHandler); /*редактирование профиля*/
+profileAddButton.addEventListener('click', OpenAddCardHandler); /*добавление новой карточки*/
 defaultCardList.renderItems(); /*добавление начальных карточек*/
 formProfileValidation.enableValidation(); /*запуск валидация формы профиля*/
 formCardValidation.enableValidation(); /*запуск валидация формы добавления карточки*/

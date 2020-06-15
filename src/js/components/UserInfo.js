@@ -6,8 +6,11 @@ export default class UserInfo {
         this._profileStatus = twoSelectors.profileStatus;
     }
     getUserInfo() {
-        authorInput.value = this._profileAuthor.textContent;
-        statusInput.value = this._profileStatus.textContent;
+        const userInfo = {
+            author: this._profileAuthor.textContent,
+            status: this._profileStatus.textContent,
+        }
+        return userInfo;
     }
     setUserInfo() {
         this._profileAuthor.textContent = authorInput.value;

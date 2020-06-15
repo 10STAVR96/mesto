@@ -9,7 +9,6 @@ export default class PopupWithForm extends Popup {
         super.close();
         this._popupSelector.querySelector('#card-name').value = '';
         this._popupSelector.querySelector('#card-url').value = '';
-        this._popupSelector.querySelector('.popup__container').removeEventListener('submit', this._submitFormHandler);
     }
     getInputValues() {            /*данный метод используется в OpenAddCardHandler, если сделать его приватным, то он вобще нигде не нужен*/
         const item = {
@@ -20,6 +19,6 @@ export default class PopupWithForm extends Popup {
     }
     _setEventListeners() {
         super._setEventListeners();
-        this._popupSelector.querySelector('.popup__container').addEventListener('submit', this._submitFormHandler);
+        this._popupSelector.querySelector('.popup__container').addEventListener('submit', this._submitFormHandler, {once: true});
     }
 }

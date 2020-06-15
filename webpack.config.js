@@ -21,9 +21,13 @@ module.exports = {
             },
             {
             // регулярное выражение, которое ищет все файлы с такими расширениями
-            test: /\.(png|svg|jpg|gif|woff|woff2)$/,
+            test: /\.(png|svg|jpg|gif)$/,
             // при обработке этих файлов нужно использовать file-loader
-            loader: 'file-loader'
+            loader: 'file-loader?name=./images/[name].[ext]'
+            },
+            {
+            test: /\.(eot|ttf|woff|woff2)$/,
+            loader: 'file-loader?name=./vendor/[name].[ext]'
             },
             // аналогично добавьте правило для работы с html
             {
