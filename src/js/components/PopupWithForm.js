@@ -7,7 +7,7 @@ export default class PopupWithForm extends Popup {
     }
     close() {
         super.close();
-        if (this._popupSelector.id === 'form-card') {     /*можно было сделать также как в _getInputValues, но не уверен что нам нужно чистить инпуты профиля после сохранения, поэтому сделал с условной конструкцией*/
+        if (this._popupSelector.id === 'form-card') {    /*можно было сделать также как в _getInputValues, но не уверен что нам нужно чистить инпуты профиля после сохранения, поэтому сделал с условной конструкцией*/
             this._popupSelector.querySelector('#card-name').value = '';
             this._popupSelector.querySelector('#card-url').value = '';
         }
