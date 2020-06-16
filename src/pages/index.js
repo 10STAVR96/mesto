@@ -27,8 +27,10 @@ const cleanErrors = (element) => {
     const submitButton = element.querySelector('.popup__save');
 
     inputList.forEach((input) => {
-        if (!input.value) {           /*данная конструкция деактивирует кнопку при открытии формы formCard*/
+        if (!input.value) {           /*данная конструкция деактивирует кнопку при открытии формы formCard и активирует ее для form-profile*/
             submitButton.classList.add('popup__save_disabled');
+        } else {
+            submitButton.classList.remove('popup__save_disabled');
         }
         input.classList.remove('popup__input_type_error');
     });
