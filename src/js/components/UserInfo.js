@@ -1,5 +1,3 @@
-import {authorInput, statusInput} from '../utils/constants.js';
-
 export default class UserInfo {
     constructor(twoSelectors) {
         this._profileAuthor = twoSelectors.profileAuthor;
@@ -12,8 +10,8 @@ export default class UserInfo {
         }
         return userInfo;
     }
-    setUserInfo() {
-        this._profileAuthor.textContent = authorInput.value;
-        this._profileStatus.textContent = statusInput.value;
+    setUserInfo(data) {
+        this._profileAuthor.textContent = data.author;
+        this._profileStatus.textContent = data.status;
     }
 }

@@ -42,11 +42,8 @@ const cleanErrors = (element) => {
 const userInfo = new UserInfo (formProfileInfo); /*информация о пользователе*/
 
 const editFormProfile = new PopupWithForm ({  /*класс формы редактирования профиля*/
-    submitFormHandler: (evt) => {
-        evt.preventDefault();
-
-        userInfo.setUserInfo();
-        editFormProfile.close();
+    submitFormHandler: (item) => {
+        userInfo.setUserInfo(item);
     }
 }, formProfile);
 
@@ -76,9 +73,7 @@ const defaultCardList = new Section({    /*добавление начальны
 }, elements);
 
 const formAddCard = new PopupWithForm ({   /*класс открытия/закрытия попапа добавления карточки*/
-    submitFormHandler: (evt) => {
-        evt.preventDefault();
-        const item = formAddCard.getInputValues();
+    submitFormHandler: (item) => {
         const card = new Card ({
             data: item,
             handleCardClick: () => {
@@ -87,7 +82,6 @@ const formAddCard = new PopupWithForm ({   /*класс открытия/зак�
         }, templateElementsClass);
         const cardElement = card.generateCard();
         defaultCardList.addItem(cardElement);
-        formAddCard.close();
     }
 }, formCard);
 
