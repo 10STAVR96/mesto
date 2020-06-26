@@ -3,7 +3,9 @@
 @import url(./__remove/elements__remove.css);
 @import url(./__info/elements__info.css);
 @import url(./__name/elements__name.css);
+@import url(./__like-group/elements__like-group.css);
 @import url(./__like/elements__like.css);
+@import url(./__like-counter/elements__like-counter.css);
 @import url(./__like/_active/elements__like_active.css);
 
 .elements {
