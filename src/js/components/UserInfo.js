@@ -1,17 +1,16 @@
 export default class UserInfo {
-    constructor(twoSelectors) {
-        this._profileAuthor = twoSelectors.profileAuthor;
-        this._profileStatus = twoSelectors.profileStatus;
+    constructor(userInfoElement) {
+        this._profileAuthor = userInfoElement.profileAuthor;
+        this._profileStatus = userInfoElement.profileStatus;
     }
     getUserInfo() {
-        const userInfo = {
+        return {
             author: this._profileAuthor.textContent,
             status: this._profileStatus.textContent,
-        }
-        return userInfo;
+        };
     }
     setUserInfo(data) {
-        this._profileAuthor.textContent = data.author;
-        this._profileStatus.textContent = data.status;
+        this._profileAuthor.textContent = data.name;
+        this._profileStatus.textContent = data.about;
     }
 }

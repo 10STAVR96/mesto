@@ -11,6 +11,7 @@ export default class Popup {   /*открытия/закрытия всех popu
                 this.close();
             }
         };
+        this._popupSelector.querySelector('.popup__close').addEventListener('click', () => this.close());
     }
     open() {
         this._popupSelector.classList.add('popup_opened');
@@ -23,7 +24,6 @@ export default class Popup {   /*открытия/закрытия всех popu
     }
     
     _setEventListeners() {
-        this._popupSelector.querySelector('.popup__close').addEventListener('click', () => this.close());
         document.addEventListener('keydown', this._handleEscClose);
         document.addEventListener('click', this._handleOverlayClose);
     }

@@ -34,3 +34,5 @@ export const formProfileInfo = {
 };
 /*ниже форма подтверждения удаления карточки*/
 export const formCardRemove = document.querySelector('#form-card-remove');
+/*ниже переменные с общими значениями для функций*/
+export const prepend = 'prepend'

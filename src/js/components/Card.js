@@ -21,7 +21,6 @@ export default class Card {
                 like: this._element.querySelector('.elements__like').classList.contains('elements__like_active'),
                 likeCounter: this._element.querySelector('.elements__like-counter')
             });
-           this._handleLike();
         };
         this._clickRemove = () => {
             this._handleCardClick({
@@ -38,7 +37,7 @@ export default class Card {
             .cloneNode(true);
         return cardElement;
     }
-    _handleLike() {
+    handleLike() {
         this._element.querySelector('.elements__like').classList.toggle('elements__like_active');
 
     }
@@ -47,6 +46,7 @@ export default class Card {
         this._element.querySelector('.elements__image').removeEventListener('click', this._clickImage);
         this._element.querySelector('.elements__like').removeEventListener('click', this._clickLike);
         this._element.querySelector('.elements__remove').removeEventListener('click', this._clickRemove);
+        this._element = null;
     }
     _setEventListeners() {
         this._element.querySelector('.elements__image').addEventListener('click', this._clickImage);
