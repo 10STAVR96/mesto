@@ -70,23 +70,8 @@ const renderLoading = (isLoading, form, defaultButtonText, loadingMessage) => { 
     }
   }
 
-/*=========== ниже классы и функции для загрузки данных профиля при загрузке страницы =============*/
-
-const profileInfoLoader = () => {  /*загрузка данных профиля при загрузке старницы*/
-    api.getProfileInfo()
-        .then((result) => {
-            formProfileInfo.profileAuthor.textContent = result.name;
-            formProfileInfo.profileStatus.textContent = result.about;
-            formProfileInfo.profileAuthor.id = result._id;
-            profileAvatar.src = result.avatar;
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-}
-
 /*=============== ниже классы и функции для редактирования профиля ==================*/
-const userInfo = new UserInfo (formProfileInfo); /*класс информации о пользователе*/
+const userInfo = new UserInfo (formProfileInfo, profileAvatar); /*класс информации о пользователе*/
 
 const editFormProfile = new PopupWithForm ({  /*класс формы редактирования профиля*/
     submitFormHandler: (item) => {
@@ -114,35 +99,32 @@ const profileEditHandler = () => {          /*открытие/закрытие 
 };
 
 /*============ ниже классы и функции для редактирования аватара профиля ================*/
-const changeAvatar = (item) => {     /*изменение аватара*/
-    renderLoading(true, formAvatar,'Сохранить', 'Сохранение...');
-    api.editProfileAvatar(item.link)
-        .then((result) => {
-            profileAvatar.src = result.avatar;
-            editProfileAvatar.close();
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        .finally(() => {
-            renderLoading(false, formAvatar,'Сохранить', 'Сохранение...');
-        });
-};
 
 const editProfileAvatar = new PopupWithForm ({  /*класс формы редактирования аватара*/
     submitFormHandler: (item) => {
-        changeAvatar(item);
+        renderLoading(true, formAvatar,'Сохранить', 'Сохранение...');
+        api.editProfileAvatar(item.link)
+            .then((result) => {
+                userInfo.setUserAvatar(result);
+                editProfileAvatar.close();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                renderLoading(false, formAvatar,'Сохранить', 'Сохранение...');
+            });
     }
 }, formAvatar);
 
 const profileEditAvatarHandler = () => {   /*открытие формы редактирования аватара профиля*/
-    avatarLinkInput.value = profileAvatar.src;
+    avatarLinkInput.value = userInfo.getUserAvatar();
     editProfileAvatar.open();
     cleanErrors(formAvatar);
 }
 
 /*============= ниже классы и функции для удаления карточки ===========*/
-let currentCard; /*переменная для хранения значений текущей карточки (нужно для удаления и должна находиться именно в index.js)*/
+let currentCard; /*переменная для хранения значений текущей карточки (нужно для удаления и лайков и должна находиться именно в index.js)*/
 
 const deleteCardConfirmation = new PopupWithForm ({  /*класс формы подтверждения удаления карточки*/
     submitFormHandler: () => {
@@ -158,22 +140,20 @@ const deleteCardConfirmation = new PopupWithForm ({  /*класс формы п�
 }, formCardRemove);
 
 /*=========== ниже функции для добавления и удаления лайков =============*/
-const addLike = (Object) => {      /*добавление лайка*/
-    api.addLike(Object)
+const addLike = (object) => {      /*добавление лайка*/
+    api.addLike(object)
         .then((result) => {
-            currentCard.class.handleLike();
-            Object.likeCounter.textContent = result.likes.length;
+            currentCard.class.handleLike(result.likes.length);
         })
         .catch((err) => {
             console.log(err);
         });
 };
 
-const deleteLike = (Object) => {   /*удаление лайка*/
-    api.deleteLikes(Object)
+const deleteLike = (object) => {   /*удаление лайка*/
+    api.deleteLikes(object)
         .then((result) => {
-            currentCard.class.handleLike();
-            Object.likeCounter.textContent = result.likes.length;
+            currentCard.class.handleLike(result.likes.length);
         })
         .catch((err) => {
             console.log(err);
@@ -191,29 +171,32 @@ const addCardsToDom = (card, position) => {     /*добавление карт�
     }
 };
 
-const createCard = (item, position) => {  /*создание карточки и добавление в разметку*/
+const writeCurrentCard = (object, className) => { /*запись значений в текущую карточку*/
+    currentCard = {
+        object: object,
+        class: className
+    };
+};
+
+const createCard = (item, userId, position) => {  /*создание карточки и добавление в разметку*/
     const card = new Card ({
         data: item,
-        handleCardClick: (cardObject) => {
-            if (cardObject.command==='openImage') {
-                popupImage.open(item);
+        handleClickImage: () => {
+            popupImage.open(item);
+        },
+        handleClickLike: (cardObject) => {
+            if(cardObject.like) {
+                deleteLike(cardObject);
+            } else {
+                addLike(cardObject);
             }
-            if (cardObject.command==='likeImage') {
-                if(cardObject.like) {
-                    deleteLike(cardObject);
-                } else {
-                    addLike(cardObject);
-                }
-            }
-            if (cardObject.command==='removeCard') {
-                deleteCardConfirmation.open();
-            }
-            currentCard = {
-                object: item,
-                class: card
-            };
+            writeCurrentCard(item, card);
+        },
+        handleClickDelete: () => {
+            deleteCardConfirmation.open();
+            writeCurrentCard(item, card);
         }
-    }, templateElementsClass, formProfileInfo);
+    }, templateElementsClass, userId);
     const cardElement = card.generateCard();
     addCardsToDom(cardElement, position);
 };
@@ -223,7 +206,7 @@ const formAddCard = new PopupWithForm ({   /*класс открытия/зак�
         renderLoading(true, formCard,'Создать', 'Создание...');
         api.addCard(item)     /*добавление карточки на сервер*/
             .then((result) => {
-                createCard(result, prepend);
+                createCard(result, result.owner._id, prepend);
                 formAddCard.close();
             })
             .catch((err) => {
@@ -241,20 +224,10 @@ const OpenAddCardHandler = () => {    /*открытие/закрытие поп
 };
 
 const defaultCardList = new Section({  /*класс для добавления начальных карточек*/
-    renderer: (item) => {
-        createCard(item);
+    renderer: (item, userId) => {
+        createCard(item, userId);  /*третий параметр не указан, значит по умолчанию position="append"*/
     }
 }, elements);
-
-const defaultCardsLoader = () => {    /*добавление начальных карточек*/
-    api.getCards()
-        .then((result) => {
-            defaultCardList.renderItems(result);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-};
 
 /*ниже классы для валидации форм*/
 const formProfileValidation = new FormValidator(formElements, formProfile); /*валидация формы профиля*/
@@ -268,9 +241,10 @@ formProfileValidation.enableValidation(); /*запуск валидация фо
 formCardValidation.enableValidation(); /*запуск валидация формы добавления карточки*/
 formAvatarValidation.enableValidation(); /*запуск валидации формы изменения аватара*/
 
-Promise.all( [profileInfoLoader()] )   /*загрузка данных профиля при загрузке старницы*/
-    .then((result) => {
-        defaultCardsLoader();       /*добавление начальных карточек*/
+Promise.all([api.getProfileInfo(), api.getCards()]) /*загрузка данных профиля и карточек (спасибо, что показали как правильно)*/
+    .then(([user, cards]) => {
+        userInfo.setUser(user);
+        defaultCardList.renderItems(cards, user._id);
     })
     .catch((err) => {
         console.log(err);

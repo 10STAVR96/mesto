@@ -12,11 +12,10 @@ export default class Section {
     _clear() {
         this._container.innerHTML = '';
     }
-    renderItems(items) {
+    renderItems(items, userId) {
         this._clear();
-  
         items.forEach(item => {
-            this._renderer(item);
+            this._renderer(item, userId);
         });
     }
 }
