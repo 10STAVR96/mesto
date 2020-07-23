@@ -1,6 +1,4 @@
-import {token, cohortId} from './utils';
-
-class Api {
+export default class Api {
     constructor(options) {
         this._baseUrl = options.baseUrl;
         this._headers = options.headers;
@@ -106,14 +104,4 @@ class Api {
                 return Promise.reject(`Ошибка: ${res.status}`);
             });
     }
-}
-
-const api = new Api({
-    baseUrl: `https://mesto.nomoreparties.co/v1/${cohortId}/`,
-    headers: {
-        authorization: token,
-        'Content-Type': 'application/json'
-    }
-});
-
-export default api;
+  }

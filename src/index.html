@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личная галерея фотографий</title>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <img class="header__logo" src="./images/logo.svg" alt="лого">
+    </header>
+
+    <main>
+      <section class="profile">
+        <div class="profile__info">
+          <button class="profile__edit-avatar" type="button">
+            <img class="profile__avatar" src="./images/avatar.jpg" alt="аватар Жак-Ив Кусто">
+            <img class="profile__pencil" src="./images/edit-avatar-pencil.svg">
+          </button>
+          <div class="profile__description">
+            <div class="profile__name">
+              <h2 class="profile__author">Жак-Ив Кусто</h2>
+              <p class="profile__status">Исследователь океана</p>
+            </div>
+            <button class="profile__edit" type="button"></button>
+          </div>
+        </div>
+        <button class="profile__add" type="button"></button>
+      </section>
+
+      <section class="elements"></section>
+
+      <template class="elements-template">
+        <div class="elements__element">
+          <img class="elements__image">
+          <button class="elements__remove" type="button"></button>
+          <div class="elements__info">
+            <h3 class="elements__name"></h3>
+            <div class="elements__like-group">
+              <button class="elements__like" type="button"></button>
+              <span class="elements__like-counter"></span>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <div id="form-profile" class="popup">
+        <form class="popup__container" novalidate method="POST" action="index.html">
+          <button class="popup__close" type="button"></button>
+          <h2 class="popup__title">Редактировать профиль</h2>
+          <input id="form-author" class="popup__input" type="text" name="author" required placeholder="Ваше имя" pattern="[A-Za-zА-Яа-яЁё -]{2,40}">
+          <span class="popup__input-error" id="form-author-error"></span>
+          <input id="form-status" class="popup__input" type="text" name="status" required placeholder="Ваш статус" pattern="[A-Za-zА-Яа-яЁё, -]{2,200}">
+          <span class="popup__input-error" id="form-status-error"></span>
+          <button class="popup__save" type="submit">Сохранить</button>
+        </form>
+      </div>
+
+      <div id="form-avatar" class="popup">
+        <form class="popup__container" novalidate method="POST" action="index.html">
+          <button class="popup__close" type="button"></button>
+          <h2 class="popup__title">Обновить аватар</h2>
+          <input id="avatar-link" class="popup__input" type="url" name="link" required placeholder="Ссылка на аватар">
+          <span class="popup__input-error" id="avatar-link-error"></span>
+          <button class="popup__save" type="submit">Сохранить</button>
+        </form>
+      </div>
+
+      <div id="form-card" class="popup">
+        <form class="popup__container" novalidate method="POST" action="index.html">
+          <button class="popup__close" type="button"></button>
+          <h2 class="popup__title">Новое место</h2>
+          <input id="card-name" class="popup__input" type="text" name="name" minlength="1" maxlength="30" required placeholder="Название">
+          <span class="popup__input-error" id="card-name-error"></span>
+          <input id="card-url" class="popup__input" type="url" name="link" required placeholder="Ссылка на картинку">
+          <span class="popup__input-error" id="card-url-error"></span>
+          <button class="popup__save" type="submit">Создать</button>
+        </form>
+      </div>
+
+      <div id="form-card-remove" class="popup">
+        <form class="popup__container" novalidate method="POST" action="index.html">
+          <button class="popup__close" type="button"></button>
+          <h2 class="popup__title">Вы уверены?</h2>
+          <button class="popup__save" type="submit">Да</button>
+        </form>
+      </div>
+
+      <div id="element-image" class="popup">
+        <div class="popup__image-container">
+          <button class="popup__close" type="button"></button>
+          <img class="popup__image">
+          <h3 class="popup__image-name"></h3>
+        </div>
+      </div>
+      
+    </main>
+
+    <footer class="footer">
+      <p class="footer__copyright">&copy; 2020 Mesto Russia</p>
+    </footer>
+  </div>
+
+</body>
+</html>
